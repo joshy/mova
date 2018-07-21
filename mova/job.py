@@ -37,8 +37,9 @@ def download_series(config, series_list, dir_name):
                   + ' --output-directory ' + image_folder \
                   + ' -k StudyInstanceUID=' + study_instance_uid \
                   + ' -k SeriesInstanceUID=' + series_instance_uid \
-                  + ' ' + dcmtk.dcmin
+                  + ' ' #+ dcmtk.dcmin
         args = shlex.split(command)
+        print(command)
         queue(args)
         logger.debug('Running command %s', args)
         logger.debug('Running args %s', args)

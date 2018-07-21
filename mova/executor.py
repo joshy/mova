@@ -1,5 +1,9 @@
 import subprocess
+from subprocess import PIPE
+
 
 def run(cmd):
-    return subprocess.run(cmd, stderr=subprocess.PIPE, shell=False, check=True)
+    completed = subprocess.run(cmd, stderr=subprocess.STDOUT, shell=False, check=True)
+
+    return completed.returncode, completed.stdout
 
