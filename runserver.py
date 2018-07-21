@@ -14,11 +14,11 @@ if not os.path.exists(LOG_DIR):
 
 daiquiri.setup(level=logging.DEBUG,
     outputs=(
-        daiquiri.output.File('logs/meta-errors.log', level=logging.ERROR),
+        daiquiri.output.File('logs/mo-errors.log', level=logging.ERROR),
         daiquiri.output.RotatingFile(
             'logs/mova-debug.log',
             level=logging.DEBUG,
             # 10 MB
             max_size_bytes=10000000)
     ))
-app.run(host='0.0.0.0')
+app.run(host='0.0.0.0', port=5001)
