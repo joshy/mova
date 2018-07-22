@@ -1,4 +1,5 @@
 # Mova
+[![Build Status](https://api.travis-ci.org/joshy/mova.svg?branch=master)](https://travis-ci.org/joshy/mova)
 
 A system for getting studies from a PACS. Needs dcmtk for dicom communication.
 
