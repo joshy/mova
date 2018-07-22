@@ -11,14 +11,17 @@ from mova.executor import run
 logger = logging.getLogger('job')
 
 
-def transfer_command(dcmkt_config, pacs_config, target, study_id, series_id):
+def transfer_command(dcmkt_config, pacs_config, target, study_uid, series_uid):
     """ Constructs the first part of the transfer command to a PACS node. """
-    return dcmkt_config.dcmtk_bin + 'movescu -v -S ' \
-           '-aem {} -aet {} -aec {} {} {} \
-           -k StudyInstanceUID={} -k SeriesInstanceUID={} {}' \
-           .format(target, pacs_config.ae_title, pacs_config.ae_called, \
-           pacs_config.peer_address, pacs_config.peer_port,
-           study_id, series_id, dcmkt_config.dcmin)
+    return dcmkt_config.dcmtk_bin + '/movescu -v -S ' + _transfer(
+        dcmkt_config, pacs_config, target, study_uid, series_uid)
+
+
+def _transfer(dcmkt_config, pacs_config, target, study_uid, series_uid):
+    return '-aem {} -aet {} -aec {} {} {} -k StudyInstanceUID={} -k SeriesInstanceUID={} {}'.format(
+        target, pacs_config.ae_title, pacs_config.ae_called,
+        pacs_config.peer_address, pacs_config.peer_port, study_uid, series_uid,
+        dcmkt_config.dcmin)
 
 
 def transfer_series(config, series_list, target):
@@ -29,7 +32,8 @@ def transfer_series(config, series_list, target):
         series_uid = entry['series_uid']
         command = transfer_command(dcmtk, pacs, target, study_uid, series_uid)
         args = shlex.split(command)
-        logger.debug('Running command %s', args)
+        queue(args)
+        logger.debug('Running transfer command %s', args)
     return len(series_list)
 
 
@@ -60,9 +64,8 @@ def download_series(config, series_list, dir_name):
                   + ' -k SeriesInstanceUID=' + series_uid \
                   + ' ' + dcmtk.dcmin
         args = shlex.split(command)
-        queue(args)
-        logger.debug('Running command %s', args)
-        logger.debug('Running args %s', args)
+        #queue(args)
+        logger.debug('Running download command %s', args)
     return len(series_list)
 
 
