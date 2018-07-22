@@ -11,6 +11,28 @@ from mova.executor import run
 logger = logging.getLogger('job')
 
 
+def transfer_command(dcmkt_config, pacs_config, target, study_id, series_id):
+    """ Constructs the first part of the transfer command to a PACS node. """
+    return dcmkt_config.dcmtk_bin + 'movescu -v -S ' \
+           '-aem {} -aet {} -aec {} {} {} \
+           -k StudyInstanceUID={} -k SeriesInstanceUID={} {}' \
+           .format(target, pacs_config.ae_title, pacs_config.ae_called, \
+           pacs_config.peer_address, pacs_config.peer_port,
+           study_id, series_id, dcmkt_config.dcmin)
+
+
+def transfer_series(config, series_list, target):
+    dcmtk = dcmtk_config(config)
+    pacs = pacs_config(config)
+    for entry in series_list:
+        study_id = entry['study_id']
+        series_id = entry['series_id']
+        command = transfer_command(dcmtk, pacs, target, study_id, series_id)
+        args = shlex.split(command)
+        logger.debug('Running command %s', args)
+    return len(series_list)
+
+
 def base_command(dcmtk_config, pacs_config):
     """ Constructs the first part of a dcmtk command. """
     return dcmtk_config.dcmtk_bin \

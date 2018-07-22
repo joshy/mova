@@ -8,7 +8,7 @@ from flask import Flask, jsonify, render_template, request
 from flask_assets import Bundle, Environment
 
 from mova.config import dcmtk_config, pacs_config
-from mova.job import download_series
+from mova.job import download_series, transfer_series
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object('mova.default_config')
@@ -32,9 +32,9 @@ def main():
     return render_template('index.html', version=app.config['VERSION'])
 
 
-@app.route('/receive', methods=['POST'])
-def receive():
-    """ Ajax post to download series of images. """
+@app.route('/download', methods=['POST'])
+def download():
+    """ Post to download series of images. """
     app.logger.info("download called")
     data = request.get_json(force=True)
     # list of objects with following keys
@@ -45,3 +45,14 @@ def receive():
     dir_name = data.get('dir', '')
     length = download_series(app.config, series_list, dir_name)
     return json.dumps({'status': 'OK', 'series_length': length})
+
+
+@app.route('/transfer', methods=['POST'])
+def transfer():
+    """ Post to transfer series of images to another PACS node. """
+    data = request.get_json(force=True)
+    target = data.get('target', '')
+    series_list = data.get('data', '')
+    app.logger.info("transfer called and sending to %s", target)
+    study_size = transfer_series(series_list, target)
+    return str(study_size)
