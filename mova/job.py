@@ -25,9 +25,9 @@ def transfer_series(config, series_list, target):
     dcmtk = dcmtk_config(config)
     pacs = pacs_config(config)
     for entry in series_list:
-        study_id = entry['study_id']
-        series_id = entry['series_id']
-        command = transfer_command(dcmtk, pacs, target, study_id, series_id)
+        study_uid = entry['study_uid']
+        series_uid = entry['series_uid']
+        command = transfer_command(dcmtk, pacs, target, study_uid, series_uid)
         args = shlex.split(command)
         logger.debug('Running command %s', args)
     return len(series_list)
@@ -50,16 +50,15 @@ def download_series(config, series_list, dir_name):
     output_dir = config['IMAGE_FOLDER']
     dcmtk = dcmtk_config(config)
     pacs = pacs_config(config)
-    print('jack')
     for entry in series_list:
         image_folder = _create_image_dir(output_dir, entry, dir_name)
-        study_instance_uid = entry['study_id']
-        series_instance_uid = entry['series_id']
+        study_uid = entry['study_uid']
+        series_uid = entry['series_uid']
         command = base_command(dcmtk, pacs) \
                   + ' --output-directory ' + image_folder \
-                  + ' -k StudyInstanceUID=' + study_instance_uid \
-                  + ' -k SeriesInstanceUID=' + series_instance_uid \
-                  + ' ' #+ dcmtk.dcmin
+                  + ' -k StudyInstanceUID=' + study_uid \
+                  + ' -k SeriesInstanceUID=' + series_uid \
+                  + ' ' + dcmtk.dcmin
         args = shlex.split(command)
         print(command)
         queue(args)
