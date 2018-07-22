@@ -64,7 +64,7 @@ def download_series(config, series_list, dir_name):
                   + ' -k SeriesInstanceUID=' + series_uid \
                   + ' ' + dcmtk.dcmin
         args = shlex.split(command)
-        #queue(args)
+        queue(args)
         logger.debug('Running download command %s', args)
     return len(series_list)
 
