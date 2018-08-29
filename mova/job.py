@@ -46,7 +46,7 @@ def base_command(dcmtk_config, pacs_config):
                pacs_config.peer_port, pacs_config.incoming_port)
 
 
-def download_series(config, series_list, dir_name):
+def download_series(config, series_list, dir_name, queue_name):
     """ Download the series. The folder structure is as follows:
         MAIN_DOWNLOAD_DIR / USER_DEFINED / PATIENTID / ACCESSION_NUMBER /
           / SERIES_NUMER
@@ -54,6 +54,7 @@ def download_series(config, series_list, dir_name):
     output_dir = config['IMAGE_FOLDER']
     dcmtk = dcmtk_config(config)
     pacs = pacs_config(config)
+    jobs = []
     for entry in series_list:
         image_folder = _create_image_dir(output_dir, entry, dir_name)
         study_uid = entry['study_uid']
@@ -64,14 +65,18 @@ def download_series(config, series_list, dir_name):
                   + ' -k SeriesInstanceUID=' + series_uid \
                   + ' ' + dcmtk.dcmin
         args = shlex.split(command)
-        queue(args)
+        jobs.append(queue(args, queue_name))
         logger.debug('Running download command %s', args)
-    return len(series_list)
+    return len(series_list), jobs
 
 
-def queue(cmd):
+def queue(cmd, queue_name):
     redis_conn = Redis()
-    q = Queue(connection=redis_conn)  # no args implies the default queue
+    if queue_name:
+        q = Queue(queue_name, connection=redis_conn)
+    else:
+        # no args implies the default queue
+        q = Queue(connection=redis_conn)
     j = q.enqueue(run, cmd, timeout=900) # 15min timeout
     return j
 

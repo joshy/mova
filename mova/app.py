@@ -39,8 +39,10 @@ def download():
     data = request.get_json(force=True)
     series_list = data.get('data', '')
     dir_name = data.get('dir', '')
-    length = download_series(app.config, series_list, dir_name)
-    return json.dumps({'status': 'OK', 'series_length': length})
+    queue_name = data.get('queue', '')
+    length, jobs = download_series(app.config, series_list, dir_name, queue_name)
+    ids = [job.id for job in jobs]
+    return json.dumps({'status': 'OK', 'series_length': length, 'ids': ids})
 
 
 @app.route('/transfer', methods=['POST'])
