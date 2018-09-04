@@ -65,7 +65,11 @@ def download_series(config, series_list, dir_name, queue_name):
                   + ' -k SeriesInstanceUID=' + series_uid \
                   + ' ' + dcmtk.dcmin
         args = shlex.split(command)
-        jobs.append(queue(args, queue_name))
+        job = queue(args, queue_name)
+        job_entry = entry.copy()
+        job_entry['job_id'] = job.id
+        print(job_entry)
+        jobs.append(job_entry)
         logger.debug('Running download command %s', args)
     return len(series_list), jobs
 
