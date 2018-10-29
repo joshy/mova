@@ -24,7 +24,7 @@ def _transfer(dcmkt_config, pacs_config, target, study_uid, series_uid):
         dcmkt_config.dcmin)
 
 
-def transfer_series(config, series_list, target):
+def transfer_series(config, series_list, target, queue_name):
     dcmtk = dcmtk_config(config)
     pacs = pacs_config(config)
     for entry in series_list:
@@ -32,7 +32,7 @@ def transfer_series(config, series_list, target):
         series_uid = entry['series_uid']
         command = transfer_command(dcmtk, pacs, target, study_uid, series_uid)
         args = shlex.split(command)
-        queue(args)
+        queue(args, queue_name)
         logger.debug('Running transfer command %s', args)
     return len(series_list)
 
