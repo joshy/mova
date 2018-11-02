@@ -1,4 +1,4 @@
-Flask==0.12
+flask>=0.12.3
 Flask-Assets==0.12
 jsmin==2.2.1
 requests>=2.20.0
