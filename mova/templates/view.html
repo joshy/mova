@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>View Server</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<!-- iOS meta tags -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<link rel="stylesheet" href="{{url_for('static', filename='css/tachyons.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="/static/css/papaya.css" />
+	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+
+	<script type="text/javascript" src="/static/js/papaya.js"></script>
+
+
+	<script type="text/javascript">
+		var params = [];
+		params["images"] = [{{source_image | safe}}];
+		params["fullScreenPadding"] = false;
+		params["kiosMode"] = true;
+		params["padAllImages"] = true;
+		params["loadingComplete"] = function() {
+			console.log("loaded")
+		}
+	</script>
+
+</head>
+
+<body class="w-100 sans-serif bg-black washed-blue">
+	{% include 'partials/header.html' %}
+	<div class="b--black-10 mw8 center pt2">
+		<h2 class="b--black-10 mw8 center h6 bb">Images</h2>
+		<div class="overflow-auto pb5">
+			<table class="f6 w-100 center" cellspacing="0">
+				<thead>
+					<tr>
+						<th class="fw6 bb bw1 b--black-80 tl pb2 pa1 w-20">PatientID</th>
+						<th class="fw6 bb bw1 b--black-80 tl pb2 pa1 w-25 tl">AccessionNumber</th>
+						<th class="fw6 bb bw1 b--black-80 tl pb2 pa1 w-25 tl">StudyDescription</th>
+						<th class="fw6 bb bw1 b--black-80 tl pb2 pa1 tl">SeriesNumber</th>
+						<th class="fw6 bb bw1 b--black-80 tl pb2 pa1 tl">SeriesDescription</th>
+					</tr>
+				</thead>
+				<tbody class="lh-copy" style="padding: auto">
+					<tr>
+						<td class="pa1 bb b--black-10 w-20">{{ result['patient_id'] }}</td>
+						<td class="pa1 bb b--black-10 w-20 tl">{{ result['accession_number'] }}</td>
+						<td class="pa1 bb b--black-10 w-20 tl">{{ result['study_description'] }}</td>
+						<td class="pa1 bb b--black-10 w-5 tl">{{ result['series_number'] }}</td>
+						<td class="pa1 bb b--black-10 w-5 tl">{{ result['series_description'] }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="papaya pt4" data-params="params"></div>
+	</div>
+</body>
+
+</html>
