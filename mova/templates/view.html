@@ -21,11 +21,12 @@
 		var params = [];
 		params["images"] = [{{source_image | safe}}];
 		params["fullScreenPadding"] = false;
-		params["kiosMode"] = true;
-		params["padAllImages"] = true;
+		params["kiosMode"] = false;
+		params["padAllImages"] = false;
 		params["loadingComplete"] = function() {
 			console.log("loaded")
 		}
+		papaya.Container.resetViewer(0,params);
 	</script>
 
 </head>
