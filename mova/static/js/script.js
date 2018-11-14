@@ -1,5 +1,6 @@
 $(function () {
   console.log('ready')
+
   var job_id = $('#loading').data("job-id")
 
   if (job_id == "None") {
@@ -18,7 +19,9 @@ $(function () {
   if ($("papaya_div").data("cr-modality")) {
     params["orthogonal"] = false;
   }
+
   papaya.Container.addViewer("papaya_div", params)
   papaya.Container.startPapaya();
   papaya.Container.resetViewer(0, params);
+
 });

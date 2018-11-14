@@ -85,8 +85,6 @@ def view():
         # viewing is only supported for one series!
         job_id = jobs[0].id
 
-    print(json.dumps(files))
-
     return render_template("view.html", source_image=json.dumps(files), result=entry, cr_modality=cr_modality, job_id=job_id)
 
 
