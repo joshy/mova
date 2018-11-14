@@ -99,26 +99,6 @@ def download_series(config, series_list, dir_name, queue_name):
     return len(series_list), job_entries, jobs, q
 
 
-def convert_series(config, entry, queue_name):
-    _, _, jobs, q = download_series(config, [entry], "viewer", queue_name)
-    k = q.enqueue(co, (config, entry), depends_on=jobs[0])
-    return True
-
-
-def co(input):
-    config, entry = input
-    print("Download complete")
-    redis_conn = Redis()
-    current_job = get_current_job(redis_conn)
-
-    output_dir = config["IMAGE_FOLDER"]
-    p = Path(output_dir) / "viewer" /entry["patient_id"] / entry["accession_number"] / entry["series_number"]
-    dicom_series_to_nifti(p, str(p) + "/source.nii.gz")
-
-    print("Running conversion")
-    return True
-
-
 def queue(cmd, queue_name):
     redis_conn = Redis()
     if queue_name:

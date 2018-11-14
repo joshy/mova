@@ -22,4 +22,3 @@ daiquiri.setup(level=logging.DEBUG,
             max_size_bytes=10000000)
     ))
 app.run(host='0.0.0.0', port=9001)
-

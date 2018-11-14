@@ -9,7 +9,7 @@ from flask import Flask, jsonify, render_template, request, send_file
 from flask_assets import Bundle, Environment
 
 from mova.config import dcmtk_config, pacs_config
-from mova.job import download_series, convert_series, transfer_series
+from mova.job import download_series, transfer_series
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object("mova.default_config")
@@ -21,7 +21,7 @@ app.register_blueprint(rq_dashboard.blueprint, url_prefix="/rq")
 
 assets = Environment(app)
 js = Bundle(
-    "js/jquery-3.3.1.min.js", "js/script.js", filters="jsmin", output="gen/packed.js"
+    "js/jquery-3.3.1.min.js", "js/papaya.js", "js/script.js", filters="jsmin", output="gen/packed.js"
 )
 assets.register("js_all", js)
 
@@ -63,7 +63,8 @@ def view():
     study_description = request.args.get('study_description')
     series_description = request.args.get('series_description')
 
-
+    # for CR modality viewer shows only one view, used in frontend
+    cr_modality = request.args.get('modality') == "CR"
     entry = {}
     entry["study_uid"] = request.args.get("study_uid")
     entry["series_uid"] = request.args.get("series_uid")
@@ -74,18 +75,19 @@ def view():
     entry["series_description"] = series_description
 
     output_dir = app.config["IMAGE_FOLDER"]
-    image_path = Path("images") / "viewer" / patient_id / accession_number / series_number / "source.nii.gz"
     p = Path(output_dir) / "viewer" / patient_id / accession_number / series_number
-    s = p / "source.nii.gz"
+    list = p.glob("*")
+    files = ["/images" + str(x) for x in list if x.is_file()]
 
-    if s.exists():
-        return render_template("view.html", source_image=image_path, result=entry)
-    else:
-        list = p.glob("*")
-        files = ["/images" + str(x) for x in list if x.is_file()]
+    job_id = None
+    if len(files) <= 0:
+        _, job_entries, jobs, q = download_series(app.config, [entry], "viewer", "viewer")
+        # viewing is only supported for one series!
+        job_id = jobs[0].id
 
-        #result = convert_series(app.config, entry, "viewer")
-        return render_template("view.html", source_image=json.dumps(files), result=entry)
+    print(json.dumps(files))
+
+    return render_template("view.html", source_image=json.dumps(files), result=entry, cr_modality=cr_modality, job_id=job_id)
 
 
 @app.route("/images/<path:path>")
@@ -93,5 +95,4 @@ def images(path):
     output_dir = app.config["IMAGE_FOLDER"]
     f = os.path.join(output_dir, path)
     x = Path(path)
-    print("_______", x)
     return send_file("/" + str(x), mimetype="appliaction/dicom")

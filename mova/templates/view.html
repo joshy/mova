@@ -12,29 +12,21 @@
 
 	<link rel="stylesheet" href="{{url_for('static', filename='css/tachyons.min.css') }}">
 	<link rel="stylesheet" type="text/css" href="/static/css/papaya.css" />
-	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+	<link rel="stylesheet" type="text/css" href="/static/css/custom.css" />
 
-	<script type="text/javascript" src="/static/js/papaya.js"></script>
+	{% assets "js_all" %}
+		<script type="text/javascript" src="{{ ASSET_URL }}"></script>
+  	{% endassets %}
 
 
-	<script type="text/javascript">
-		var params = [];
-		params["images"] = [{{source_image | safe}}];
-		params["fullScreenPadding"] = false;
-		params["kiosMode"] = false;
-		params["padAllImages"] = false;
-		params["loadingComplete"] = function() {
-			console.log("loaded")
-		}
-		papaya.Container.resetViewer(0,params);
-	</script>
+
+
 
 </head>
 
 <body class="w-100 sans-serif bg-black washed-blue">
 	{% include 'partials/header.html' %}
 	<div class="b--black-10 mw8 center pt2">
-		<h2 class="b--black-10 mw8 center h6 bb">Images</h2>
 		<div class="overflow-auto pb5">
 			<table class="f6 w-100 center" cellspacing="0">
 				<thead>
@@ -57,8 +49,11 @@
 				</tbody>
 			</table>
 		</div>
-		<div class="papaya pt4" data-params="params"></div>
+		<div id="loading" class="tc" data-job-id="{{job_id}}">
+			<div class="spinner"></div>
+			<span class="yellow">Loading images from the PACS (id={{job_id}})</span>
+		</div>
+		<div id="papaya_div" class="papaya pt4" data-images="{{source_image}}" data-cr-modality="{{cr_modality}}"></div>
 	</div>
 </body>
-
 </html>
