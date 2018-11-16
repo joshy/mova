@@ -118,3 +118,4 @@ tasks.db
 .vscode/*
 dcmtk/*
 .noseids
+work/*

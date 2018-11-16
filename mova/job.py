@@ -2,14 +2,16 @@ import logging
 import os
 import shlex
 import subprocess
+import time
 from pathlib import Path
 
+from dicom2nifti.convert_dicom import dicom_series_to_nifti
 from redis import Redis
 from rq import Queue, get_current_job
 
-from dicom2nifti.convert_dicom import dicom_series_to_nifti
 from mova.config import dcmtk_config, pacs_config
 from mova.executor import run
+from mova.job_tracking import check
 
 logger = logging.getLogger("job")
 
@@ -120,3 +122,29 @@ def _create_image_dir(output_dir, entry, dir_name):
     if not os.path.exists(image_folder):
         os.makedirs(image_folder, exist_ok=True)
     return image_folder
+
+
+def job_result(job_id):
+
+    path = check(job_id)
+
+    # wait until no new files are arriving
+    # poor bastard solution right now
+
+    x = file_count(path)
+    time.sleep(0.5) # half second
+    y = file_count(path)
+
+    while (x != y):
+        x = file_count(path)
+        time.sleep(0.5) # half second
+        y = file_count(path)
+
+    l = list(Path(path).glob("*"))
+    files = ["/images" + str(x) for x in l if x.is_file()]
+    return files
+
+
+
+def file_count(path):
+    return len(os.listdir(path))

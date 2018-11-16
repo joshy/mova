@@ -9,7 +9,8 @@ from flask import Flask, jsonify, render_template, request, send_file
 from flask_assets import Bundle, Environment
 
 from mova.config import dcmtk_config, pacs_config
-from mova.job import download_series, transfer_series
+from mova.job import download_series, transfer_series, job_result
+from mova.job_tracking import track
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object("mova.default_config")
@@ -24,6 +25,10 @@ js = Bundle(
     "js/jquery-3.3.1.min.js", "js/papaya.js", "js/script.js", filters="jsmin", output="gen/packed.js"
 )
 assets.register("js_all", js)
+
+
+if not os.path.exists("work"):
+    os.makedirs("work")
 
 
 @app.route("/")
@@ -79,14 +84,23 @@ def view():
     list = p.glob("*")
     files = ["/images" + str(x) for x in list if x.is_file()]
 
+
+
     job_id = None
     if len(files) <= 0:
         _, job_entries, jobs, q = download_series(app.config, [entry], "viewer", "viewer")
         # viewing is only supported for one series!
         job_id = jobs[0].id
+        track(job_id, p)
 
     return render_template("view.html", source_image=json.dumps(files), result=entry, cr_modality=cr_modality, job_id=job_id)
 
+
+@app.route("/job_status/<job_id>")
+def view_stats(job_id):
+    print(job_id)
+    files  = job_result(job_id)
+    return json.dumps(files)
 
 @app.route("/images/<path:path>")
 def images(path):
