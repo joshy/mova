@@ -93,7 +93,7 @@ def view():
         job_id = jobs[0].id
         track(job_id, p)
 
-    return render_template("view.html", source_image=json.dumps(files), result=entry, cr_modality=cr_modality, job_id=job_id)
+    return render_template("view.html", source_image=json.dumps(files), result=entry, cr_modality=cr_modality, job_id=job_id, version=version)
 
 
 @app.route("/job_status/<job_id>")

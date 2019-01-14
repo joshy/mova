@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-	<title>View Server</title>
+	<title>Mini DICOM Server</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 	<!-- iOS meta tags -->
@@ -18,17 +18,13 @@
 		<script type="text/javascript" src="{{ ASSET_URL }}"></script>
   	{% endassets %}
 
-
-
-
-
 </head>
 
 <body class="w-100 sans-serif bg-black washed-blue">
 	{% include 'partials/header.html' %}
 	<div class="b--black-10 mw8 center pt2">
-		<div class="overflow-auto pb5">
-			<table class="f6 w-100 center" cellspacing="0">
+		<div class="overflow-auto pb3">
+			<table class="f6 w-100 center gold" cellspacing="0">
 				<thead>
 					<tr>
 						<th class="fw6 bb bw1 b--black-80 tl pb2 pa1 w-20">PatientID</th>
@@ -49,11 +45,15 @@
 				</tbody>
 			</table>
 		</div>
+		<div class="pink mt0 fw9 pb3 tc">!!! This is experimental, not everything will work.
+			For feedback and critics please
+			contact a <a class="pink" href="mailto:joshy.cyriac@usb.ch">developer.</a> !!!
+		</div>
 		<div id="loading" class="tc" data-job-id="{{job_id}}">
 			<div class="spinner"></div>
 			<span class="yellow">Loading images from the PACS (id={{job_id}})</span>
 		</div>
-		<div id="papaya_div" class="papaya pt4" data-images="{{source_image}}" data-cr-modality="{{cr_modality}}"></div>
+		<div id="papaya_div" class="papaya" data-images="{{source_image}}" data-cr-modality="{{cr_modality}}"></div>
 	</div>
 </body>
 </html>

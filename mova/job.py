@@ -8,6 +8,7 @@ from pathlib import Path
 from dicom2nifti.convert_dicom import dicom_series_to_nifti
 from redis import Redis
 from rq import Queue, get_current_job
+from rq.job import Job
 
 from mova.config import dcmtk_config, pacs_config
 from mova.executor import run
@@ -126,7 +127,20 @@ def _create_image_dir(output_dir, entry, dir_name):
 
 def job_result(job_id):
 
+    redis_conn = Redis()
+    job = Job.fetch(job_id, redis_conn)
+
+    status = job.get_status()
+    if not status == 'finished':
+        print("job id {} is not finised, waiting 1s".format(job_id))
+        time.sleep(1)
+        status = job.get_status()
+
+    print("job id {} is finished".format(job_id))
+
+
     path = check(job_id)
+
 
     # wait until no new files are arriving
     # poor bastard solution right now
