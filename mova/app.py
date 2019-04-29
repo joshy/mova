@@ -50,5 +50,5 @@ def transfer():
     target = data.get('target', '')
     series_list = data.get('data', '')
     app.logger.info("transfer called and sending to %s", target)
-    study_size = transfer_series(app.config, series_list, target)
+    length = transfer_series(app.config, series_list, target)
     return json.dumps({'status': 'OK', 'series_length': length})
