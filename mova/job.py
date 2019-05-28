@@ -60,9 +60,9 @@ def download_series(config, series_list, dir_name):
         series_uid = entry['series_uid']
         if not all([study_uid, series_uid]):
             print("Error missing either study_uid or series_uid")
-            print(f"study_uid: {study_uid}")
-            print(f"series_uid: {series_uid}")
-            print(f"accession number: {entry.get('accession_number')}")
+            print("study_uid:", study_uid)
+            print("series_uid:", series_uid)
+            print("accession number:", entry.get('accession_number'))
             continue
         command = base_command(dcmtk, pacs) \
                   + ' --output-directory ' + image_folder \
