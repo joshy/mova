@@ -37,8 +37,8 @@ def download():
     """ Post to download series of images. """
     app.logger.info("download called")
     data = request.get_json(force=True)
-    series_list = data.get('data', '')
-    dir_name = data.get('dir', '')
+    series_list = data.get('data')
+    dir_name = data.get('dir')
     length = download_series(app.config, series_list, dir_name)
     return json.dumps({'status': 'OK', 'series_length': length})
 
