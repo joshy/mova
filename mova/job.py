@@ -84,8 +84,8 @@ def queue(cmd):
 
 def _create_image_dir(output_dir, entry, dir_name):
     patient_id = entry['patient_id']
-    accession_number = entry['accession_number']
-    series_number = entry['series_number']
+    accession_number = str(entry['accession_number'])
+    series_number = str(entry['series_number'])
     image_folder = os.path.join(output_dir, dir_name, patient_id,
                                 accession_number, series_number)
     if not os.path.exists(image_folder):
