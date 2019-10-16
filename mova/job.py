@@ -78,7 +78,7 @@ def download_series(config, series_list, dir_name):
 def queue(cmd):
     redis_conn = Redis()
     q = Queue(connection=redis_conn)  # no args implies the default queue
-    j = q.enqueue(run, cmd, timeout=900) # 15min timeout
+    j = q.enqueue(run, cmd)
     return j
 
 
